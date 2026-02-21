@@ -1,0 +1,156 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Hệ Thống Flashcard Ôn Tập</title>
+    <link rel="stylesheet" href="style.css">
+</head>
+<body>
+    <header>
+        <h1>📚 Flashcard Ghi Nhớ Nhanh</h1>
+        <div class="filters">
+            <button class="filter-btn active" onclick="filterCards('all')">Tất cả</button>
+            <button class="filter-btn" onclick="filterCards('Toán')">Toán</button>
+            <button class="filter-btn" onclick="filterCards('Tiếng Anh')">Tiếng Anh</button>
+            <button class="filter-btn" onclick="filterCards('Tin học')">Tin học</button>
+        </div>
+    </header>
+
+    <section class="input-section">
+        <div class="section-header">
+            <h2>➕ Thêm Flashcard Mới</h2>
+            <div class="data-controls">
+                <button class="control-btn export-btn" onclick="exportData()" title="Tải dữ liệu">💾 Xuất</button>
+                <button class="control-btn import-btn" onclick="document.getElementById('import-file').click()" title="Tải dữ liệu từ file">📂 Nhập</button>
+                <input type="file" id="import-file" style="display: none;" accept=".json" onchange="importData(event)">
+            </div>
+        </div>
+        <div class="input-container">
+            <select id="subject-select" class="input-field" onchange="updateLessons()">
+                <option value="">-- Chọn môn học --</option>
+                <option value="Toán">Toán</option>
+                <option value="Tiếng Anh">Tiếng Anh</option>
+                <option value="Tin học">Tin học</option>
+            </select>
+            <select id="lesson-select" class="input-field">
+                <option value="">-- Chọn bài học --</option>
+            </select>
+            <textarea id="question-input" class="input-field" rows="4" placeholder="Nhập câu hỏi... (hỗ trợ xuống dòng)"></textarea>
+            <textarea id="answer-input" class="input-field" rows="3" placeholder="Nhập câu trả lời... (hỗ trợ xuống dòng)"></textarea>
+            <button class="add-btn" onclick="addNewCard()">Thêm Thẻ</button>
+        </div>
+    </section>
+
+    <!-- Exam sets (Đề) controls -->
+    <section class="exam-set-controls" style="margin: 24px 0 0 0; text-align: center;">
+        <h4 style="color: #2c3e50;">🗂 Quản lý Đề (Exam Sets)</h4>
+        <input id="new-exam-name" placeholder="Tên đề (vd: Đề 1)" style="padding:8px 12px;border-radius:4px;border:1px solid #ccc;margin-right:8px;">
+        <button onclick="addExamSetFromInput()" style="background:#f39c12;color:white;padding:8px 16px;border:none;border-radius:6px;font-weight:bold;cursor:pointer;">Thêm đề từ view hiện tại</button>
+        <div id="exam-tabs-container" style="margin-top:12px; display:flex; gap:8px; flex-wrap:wrap; justify-content:center;">
+            <!-- exam tabs rendered by JS -->
+        </div>
+    </section>
+
+    <div class="app-tabs">
+        <button class="tab-btn active" data-mode="learn" onclick="switchMode('learn')">Thẻ ghi nhớ</button>
+        <button class="tab-btn" data-mode="practice" onclick="switchMode('practice')">Luyện tập</button>
+        <button class="tab-btn" data-mode="exam" onclick="switchMode('exam')">Thi thử</button>
+    </div>
+
+    <main class="main-area">
+        <section id="lesson-selector" class="lesson-selector">
+            <div class="lesson-selector-header">
+                <h3>📖 Chọn Bài Học</h3>
+                <button class="add-lesson-toggle-btn" onclick="toggleAddLessonForm()">➕ Thêm Bài</button>
+            </div>
+            
+            <div id="add-lesson-form" class="add-lesson-form" style="display: none;">
+                <h4>Thêm Bài Học Mới</h4>
+                <div class="lesson-input-container">
+                    <select id="new-lesson-subject" class="lesson-input-field">
+                        <option value="">-- Chọn môn học --</option>
+                        <option value="Toán">Toán</option>
+                        <option value="Tiếng Anh">Tiếng Anh</option>
+                        <option value="Tin học">Tin học</option>
+                    </select>
+                    <input type="text" id="new-lesson-name" class="lesson-input-field" placeholder="Tên bài học (vd: Hình học nâng cao)">
+                    <button class="lesson-add-btn" onclick="addNewLesson()">Thêm</button>
+                </div>
+            </div>
+
+            <div id="lesson-buttons" class="lesson-buttons">
+                <!-- Sẽ được populate bởi JS -->
+            </div>
+
+            <!-- Tabs đề số -->
+            <div class="exam-tabs">
+                <h4 style="margin-bottom: 12px; color: #2c3e50;">📝 Chọn Đề Số:</h4>
+                <div class="exam-tabs-buttons">
+                    <button class="exam-tab-btn active" onclick="filterByExam('all')">Tất cả</button>
+                    <button class="exam-tab-btn" onclick="filterByExam(1)">Đề số 1</button>
+                    <button class="exam-tab-btn" onclick="filterByExam(2)">Đề số 2</button>
+                    <button class="exam-tab-btn" onclick="filterByExam(3)">Đề số 3</button>
+                    <button class="exam-tab-btn" onclick="filterByExam(4)">Đề số 4</button>
+                </div>
+            </div>
+        </section>
+
+        <section id="large-card-area" class="large-card-area">
+            <div id="large-card" class="large-card-container">
+                <div id="flip-card" class="flip-card">
+                    <div class="flip-card-inner">
+                        <div class="flip-card-front">
+                            <div class="subject-tag"></div>
+                            <div class="lesson-tag"></div>
+                            <div class="question">Nhấp vào để bắt đầu</div>
+                            <div class="hint">💡 Nhấp để lật | Space để lật | ← → để điều hướng</div>
+                        </div>
+                        <div class="flip-card-back">
+                            <div class="subject-tag"></div>
+                            <div class="lesson-tag"></div>
+                            <div class="answer">Câu trả lời sẽ xuất hiện tại đây</div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="controls">
+                <div class="left-controls">
+                    <button class="icon-btn" onclick="prevCard()" title="Thẻ trước">◀</button>
+                    <div class="progress-indicator"><span id="current-index">1</span> / <span id="total-count">0</span></div>
+                    <button class="icon-btn" onclick="nextCard()" title="Thẻ tiếp">▶</button>
+                </div>
+
+                <div class="right-controls">
+                    <button class="icon-btn delete-card-btn" id="delete-current-btn" onclick="deleteCurrentCard()" title="Xóa thẻ này">🗑️</button>
+                    <button class="icon-btn" id="play-btn" onclick="togglePlay()" title="Tự động phát">▶</button>
+                    <button class="icon-btn" id="shuffle-btn" onclick="toggleShuffle()" title="Xáo trộn">🔀</button>
+                    <button class="icon-btn" onclick="toggleViewMode()" title="Xem danh sách">📋</button>
+                    <button class="icon-btn" onclick="toggleFullscreen()" title="Toàn màn hình">⛶</button>
+                </div>
+            </div>
+
+            <div class="progress-bar-wrap">
+                <div id="progress-bar" class="progress-bar"></div>
+            </div>
+        </section>
+
+        <section id="grid-area" class="card-grid" style="display:none;">
+            <!-- Grid render -->
+        </section>
+
+        <section id="list-area" class="card-list-area" style="display:none;">
+            <div class="list-header">
+                <h3>📋 Danh Sách Flashcard</h3>
+                <button class="close-list-btn" onclick="toggleViewMode()">✕</button>
+            </div>
+            <div id="list-container" class="list-container">
+                <!-- Sẽ được populate bởi JS -->
+            </div>
+        </section>
+    </main>
+
+    <script src="scipt.js"></script>
+</body>
+</html>
