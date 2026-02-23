@@ -1,24 +1,107 @@
 // Dữ liệu mẫu: Ngân hàng flashcard với hệ thống bài học
 const flashcardsData = [
-    { subject: 'Toán', lesson: 'Bài 1: Đại số', question: 'Công thức tính diện tích hình tròn?', answer: 'S = π × r²' },
-    { subject: 'Toán', lesson: 'Bài 1: Đại số', question: 'Đạo hàm của sin(x) là gì?', answer: 'cos(x)' },
-    { subject: 'Toán', lesson: 'Bài 2: Hình học', question: 'Tổng góc trong tam giác bằng bao nhiêu?', answer: '180°' },
-    { subject: 'Toán', lesson: 'Bài 2: Hình học', question: 'Công thức Pythagoras là gì?', answer: 'a² + b² = c²' },
-    { subject: 'Tiếng Anh', lesson: 'Bài 1: Văn phạm', question: 'Thì hiện tại hoàn thành có cấu trúc thế nào?', answer: 'S + have/has + V(past participle)' },
-    { subject: 'Tiếng Anh', lesson: 'Bài 1: Văn phạm', question: 'Từ vựng: "Môi trường" trong tiếng Anh?', answer: 'Environment' },
-    { subject: 'Tiếng Anh', lesson: 'Bài 2: Giao tiếp', question: 'Cách hỏi về tên?', answer: 'What is your name?' },
-    { subject: 'Tiếng Anh', lesson: 'Bài 2: Giao tiếp', question: 'Cách chào hỏi buổi chiều?', answer: 'Good afternoon!' },
-    { subject: 'Tin học', lesson: 'Bài 1: Web cơ bản', question: 'HTML là viết tắt của cụm từ gì?', answer: 'HyperText Markup Language' },
-    { subject: 'Tin học', lesson: 'Bài 1: Web cơ bản', question: 'CSS dùng để làm gì?', answer: 'Định dạng và trang trí giao diện web' },
-    { subject: 'Tin học', lesson: 'Bài 2: Cấu trúc dữ liệu', question: 'Cấu trúc dữ liệu "Stack" hoạt động theo nguyên tắc nào?', answer: 'LIFO (Last In, First Out)' },
-    { subject: 'Tin học', lesson: 'Bài 2: Cấu trúc dữ liệu', question: 'Queue hoạt động theo nguyên tắc nào?', answer: 'FIFO (First In, First Out)' }
+    {
+        "id": "mlq1bx2d-iwnzld",
+        "subject": "Tin học",
+        "lesson": "SQL",
+        "exam": "Đề số 1",
+        "question": "SQL là từ viết tắt của:\nA. Strong Question Language\nB. Structured Question Language\nC. Structured Query Language",
+        "answer": "C. Structured Query Language"
+    },
+    {
+        "id": "mlq1cnqj-4ae4w9",
+        "subject": "Tin học",
+        "lesson": "SQL",
+        "question": "Câu lệnh SQL nào được dùng để trích xuất dữ liệu từ database\nA. Get\nB. Open\nC. Extract\nD. Select",
+        "answer": "D. Select"
+    },
+    {
+        "id": "mlq1dpoo-jruek5",
+        "subject": "Tin học",
+        "lesson": "SQL",
+        "exam": "Đề số 1",
+        "question": "Câu lệnh SQL nào được dùng để cập nhật dữ liệu từ database\nA. Update\nB. Save as\nC. Modify\nD. Save",
+        "answer": "A. Update"
+    },
+    {
+        "id": "mlq1g52s-7uwjz2",
+        "subject": "Tin học",
+        "lesson": "SQL",
+        "exam": "Đề số 1",
+        "question": "Câu lệnh SQL nào được dùng để xóa dữ liệu từ database\nA. Truncate\nB. Delete\nC. Remove",
+        "answer": "B. Delete"
+    },
+    {
+        "id": "mlq1i7kk-o5ltq7",
+        "subject": "Tin học",
+        "lesson": "SQL",
+        "exam": "Đề số 1",
+        "question": "Câu lệnh SQL nào được dùng để chèn thêm dữ liệu vào database:\nA. Add recrd\nB. Add into\nC. Insert\nD. Add new",
+        "answer": "C. Insert"
+    },
+    {
+        "id": "mlq1jzww-adef5l",
+        "subject": "Tin học",
+        "lesson": "SQL",
+        "exam": "Đề số 1",
+        "question": "Trong SQL, làm thế nào để chọn cột dữ liệu có tên FirstName từ bảng Persons:\nA. Extract FirstName FROM Persons\nB. Select FirstName FROM Persons\nC. Slect Persons.FirstName",
+        "answer": "B. Select FirstName FROM Persons"
+    },
+    {
+        "id": "mlq1le07-houqj5",
+        "subject": "Tin học",
+        "lesson": "SQL",
+        "exam": "Đề số 1",
+        "question": "Trong SQL, làm thế nào để chọn tất cả các cột dữ liệu trong bảng Persons:\nA. Select [all] FROM Persons\nB. Select All Persons\nC. Select *.Persons\nD. Select * FROM Persons",
+        "answer": "D. Select * FROM Persons"
+    },
+    {
+        "id": "mlq8bn8u-k93vcq",
+        "subject": "Tin học",
+        "lesson": "SQL",
+        "exam": "Đề số 1",
+        "question": "Trong SQL làm thế nào để chọn tất cả các bản ghi từ bảng Persons với giá trị trong cột FirstName là Peter:\nA. Select [all] FROM Persons WHERE FirstName=’Peter’\nB. Select * FROM Persons WHERE FirstName LIKE’Peter’\nC. Select [all] FROM Persons WHERE FirstName LIKE’Peter’\nD. Select * FROM Persons WHERE FirstName=’Peter’",
+        "answer": "D. Select * FROM Persons WHERE FirstName=’Peter’"
+    },
+    {
+        "id": "mlq8d1qy-d9mmx4",
+        "subject": "Tin học",
+        "lesson": "SQL",
+        "exam": "Đề số 1",
+        "question": "Trong SQL, làm thế nào để chọn tất cả các bản ghi từ bảng Persons với giá trị trong cột FirstName bắt đầu bằng giá trị a:\nA. Select * From Persons WHERE FirstName='%a%'\nB. Select * From Persons WHERE FirstNameLIKE %\nC. Select * From Persons WHERE FirstName=’a’\nD. Select * From Persons WHERE FirstName='a%'",
+        "answer": "D. Select * From Persons WHERE FirstName='a%'"
+    },
+    {
+        "id": "mlq8dy96-ldp2o4",
+        "subject": "Tin học",
+        "lesson": "SQL",
+        "exam": "Đề số 1",
+        "question": "Mệnh đề OR sẽ hiển thị bản ghi nếu bất kỳ điều kiện nào dưới đây là đúng. Và mệnh đề AND sẽ hiển thị bản ghi nếu tất cả điều kiện dưới đây là đúng:\nA. Đúng\nB. Sai",
+        "answer": "A. Đúng"
+    },
+    {
+        "id": "mlq8gzm2-ay1fo1",
+        "subject": "Tin học",
+        "lesson": "SQL",
+        "exam": "Đề số 1",
+        "question": "Trong SQL, làm thế nào để chọn tất cả các bản ghi từ bảng Persons với giá trị trong cột FirsName là Perter và LastName là Jackson:\nA. SELEC * FROM Persons WHERE FirstName LIKE ‘Peter” AND LastName LIKE ‘Jackson’\nB. SELEC * FROM Persons WHERE FirstName=’Peter’ AND LastName=’Jackson’\nC. SELECT FirstName=’Peter’, LastName=’Jackson’ FROM Persons",
+        "answer": "B. SELEC * FROM Persons WHERE FirstName=’Peter’ AND LastName=’Jackson’"
+    }
 ];
 
 // Mapping môn học với các bài học
 const lessonsBySubject = {
-    'Toán': ['Bài 1: Đại số', 'Bài 2: Hình học'],
-    'Tiếng Anh': ['Bài 1: Văn phạm', 'Bài 2: Giao tiếp'],
-    'Tin học': ['Bài 1: Web cơ bản', 'Bài 2: Cấu trúc dữ liệu']
+    "Toán": [
+        "Lượng giác",
+        ""
+    ],
+    "Tiếng Anh": [
+        "Artifisial Intelligence",
+        "Urbanization"
+    ],
+    "Tin học": [
+        "SQL"
+    ]
 };
 
 // Biến theo dõi bài học hiện tại
@@ -44,50 +127,49 @@ try {
 }
 
 
-// Persistence helpers: save/load from server API
-async function loadFromStorage() {
-    let dataLoaded = false;
+const GOOGLE_SCRIPT_URL = "https://script.google.com/macros/s/AKfycbxB25cNNPEwsEzDVzfPBdVVFJirso3nVuxaDWYEwFRwyvHKxil0SfazqUByJeyemnY/exec";
 
-    // 1. Ưu tiên tải từ file flashcards.json trực tiếp
+async function loadFromStorage() {
     try {
-        // Thêm timestamp để tránh cache
-        const res = await fetch('flashcards.json?t=' + new Date().getTime());
+        const res = await fetch(GOOGLE_SCRIPT_URL);
         if (res.ok) {
             const data = await res.json();
-            applyLoadedData(data, 'file flashcards.json');
-            dataLoaded = true;
+            applyLoadedData(data, 'Google Sheets');
         } else {
-            console.log(`Không tìm thấy flashcards.json (Status: ${res.status})`);
+            console.error(`Lỗi khi tải dữ liệu từ Google Sheets (Status: ${res.status})`);
         }
     } catch (e) {
-        console.warn('Lỗi khi đọc file flashcards.json:', e);
-    }
-
-    // 1b. Thử tải từ server Node.js (nếu bạn đang chạy 'node server.js')
-    if (!dataLoaded) {
-        try {
-            const res = await fetch('http://localhost:5000/flashcards');
-            if (res.ok) {
-                const data = await res.json();
-                applyLoadedData(data, 'Server Node.js (Port 5000)');
-                dataLoaded = true;
-            }
-        } catch (e) {
-            console.log('Không kết nối được server Node.js (Port 5000). Hãy chạy "node server.js" hoặc dùng Live Server.');
-        }
-    }
-
-    // 2. Nếu vẫn không có dữ liệu, dùng dữ liệu mẫu trong script
-    if (!dataLoaded) {
-        console.log('Sử dụng dữ liệu mẫu mặc định.');
+        console.error('Lỗi khi kết nối đến Google Sheets:', e);
     }
 
     ensureCardIds();
-    
+
     // Cập nhật giao diện sau khi tải dữ liệu
     filterCards('all');
     updateLessons();
     if (typeof updateExamTabs === 'function') updateExamTabs();
+}
+
+async function saveToStorage() {
+    try {
+        const dataToSave = {
+            flashcards: flashcardsData,
+            lessons: lessonsBySubject,
+            examSets: examSets
+        };
+        await fetch(GOOGLE_SCRIPT_URL, {
+            method: 'POST',
+            mode: 'no-cors', // Bỏ qua lỗi CORS của trình duyệt khi Google chuyển hướng (redirect 302)
+            redirect: 'follow',
+            body: JSON.stringify(dataToSave),
+            headers: {
+                'Content-Type': 'text/plain;charset=utf-8'
+            }
+        });
+        console.log("Đã lưu dữ liệu lên Google Sheets");
+    } catch (error) {
+        console.error("Lỗi khi lưu lên Google Sheets:", error);
+    }
 }
 
 function applyLoadedData(data, source) {
@@ -136,7 +218,7 @@ function ensureCardIds() {
 }
 
 function generateId() {
-    return Date.now().toString(36) + '-' + Math.random().toString(36).slice(2,8);
+    return Date.now().toString(36) + '-' + Math.random().toString(36).slice(2, 8);
 }
 
 // Hàm hiển thị danh sách thẻ
@@ -144,16 +226,16 @@ function renderCards(cards) {
     // Grid area render (used in "grid-area")
     const gridArea = document.getElementById('grid-area');
     gridArea.innerHTML = ''; // Xóa các thẻ cũ trước khi hiển thị mới
-    
+
     cards.forEach((card, index) => {
         // Tạo wrapper để chứa delete button
         const wrapper = document.createElement('div');
         wrapper.classList.add('flashcard-wrapper');
-        
+
         // Tạo thẻ div cho mỗi flashcard
         const cardEl = document.createElement('div');
         cardEl.classList.add('flashcard');
-        
+
         // Thêm cấu trúc HTML bên trong
         cardEl.innerHTML = `
             <div class="card-inner">
@@ -167,7 +249,7 @@ function renderCards(cards) {
                 </div>
             </div>
         `;
-        
+
         // Thêm nút delete
         const deleteBtn = document.createElement('button');
         deleteBtn.classList.add('delete-btn');
@@ -179,16 +261,16 @@ function renderCards(cards) {
                 deleteCard(cardIndex);
             }
         };
-        
+
         // Thêm sự kiện click để lật thẻ
         cardEl.addEventListener('click', () => {
             cardEl.classList.toggle('flipped');
         });
-        
+
         // Thêm card và delete button vào wrapper
         wrapper.appendChild(cardEl);
         wrapper.appendChild(deleteBtn);
-        
+
         // Đẩy wrapper vào giao diện
         gridArea.appendChild(wrapper);
     });
@@ -214,7 +296,7 @@ function filterCards(subject) {
     document.querySelectorAll('.lesson-btn').forEach(btn => {
         btn.classList.remove('active');
     });
-    
+
     updateLessonButtons(subject);
     applyFilters(); // Gọi hàm lọc tổng hợp
 }
@@ -223,7 +305,7 @@ function filterCards(subject) {
 function updateLessonButtons(subject) {
     const lessonButtonsDiv = document.getElementById('lesson-buttons');
     lessonButtonsDiv.innerHTML = '';
-    
+
     if (subject === 'all') {
         // Hiển thị tất cả bài học từ lessonsBySubject
         const allLessons = new Set();
@@ -245,16 +327,16 @@ function updateLessonButtons(subject) {
 function createLessonButton(lesson, container) {
     const wrapper = document.createElement('div');
     wrapper.className = 'lesson-btn-wrapper';
-    
+
     const btn = document.createElement('button');
     btn.className = 'lesson-btn';
     btn.textContent = lesson;
     btn.onclick = () => selectLesson(lesson);
-    
+
     if (currentLesson === lesson) {
         btn.classList.add('active');
     }
-    
+
     const deleteBtn = document.createElement('button');
     deleteBtn.className = 'lesson-delete-btn';
     deleteBtn.innerHTML = '✕';
@@ -263,7 +345,7 @@ function createLessonButton(lesson, container) {
         e.stopPropagation();
         deleteLesson(lesson);
     };
-    
+
     wrapper.appendChild(btn);
     wrapper.appendChild(deleteBtn);
     container.appendChild(wrapper);
@@ -276,10 +358,10 @@ function selectLesson(lesson) {
     } else {
         currentLesson = lesson;
     }
-    
+
     // Reset đề thi khi đổi bài học
     currentExamSet = null;
-    
+
     updateLessonButtonsUI();
     applyFilters();
 }
@@ -315,12 +397,12 @@ function applyFilters() {
     }
 
     renderCardsByLesson(filtered);
-    
+
     // Reset order với dữ liệu lọc
     // Lưu ý: flashcardsData.indexOf có thể trả về -1 nếu filtered là bản copy, 
     // nhưng ở đây filter trả về tham chiếu object gốc nên vẫn ổn.
     order = filtered.map(card => flashcardsData.indexOf(card)).filter(idx => idx !== -1);
-    
+
     if (isShuffled) shuffleOrder();
     currentIndex = 0;
     updateTotals();
@@ -338,9 +420,9 @@ function updateLessons() {
     const subjectSelect = document.getElementById('subject-select');
     const lessonSelect = document.getElementById('lesson-select');
     const subject = subjectSelect.value;
-    
+
     lessonSelect.innerHTML = '<option value="">-- Chọn bài học --</option>';
-    
+
     if (subject && lessonsBySubject[subject]) {
         lessonsBySubject[subject].forEach(lesson => {
             const option = document.createElement('option');
@@ -363,50 +445,51 @@ function toggleAddLessonForm() {
 function addNewLesson() {
     const subject = document.getElementById('new-lesson-subject').value;
     const lessonName = document.getElementById('new-lesson-name').value;
-    
+
     if (!subject || !lessonName) {
         alert('Vui lòng chọn môn học và nhập tên bài học!');
         return;
     }
-    
+
     // Tạo tên bài học đầy đủ
     const fullLessonName = `${lessonName}`;
-    
+
     // Kiểm tra xem bài học đã tồn tại chưa
     if (lessonsBySubject[subject] && lessonsBySubject[subject].includes(fullLessonName)) {
         alert('Bài học này đã tồn tại!');
         return;
     }
-    
+
     // Thêm bài học mới vào danh sách
     if (!lessonsBySubject[subject]) {
         lessonsBySubject[subject] = [];
     }
     lessonsBySubject[subject].push(fullLessonName);
-    
+
     // Clear form
     document.getElementById('new-lesson-subject').value = '';
     document.getElementById('new-lesson-name').value = '';
-    
+
     // Đóng form
     toggleAddLessonForm();
-    
+
     alert('Thêm bài học thành công! Bạn có thể thêm câu hỏi cho bài học này.');
+    saveToStorage();
 }
 
 // Hàm xóa bài học
 function deleteLesson(lesson) {
     // Kiểm tra xem có bao nhiêu flashcard thuộc bài học này
     const cardsInLesson = flashcardsData.filter(card => card.lesson === lesson).length;
-    
+
     let message = `Bạn có chắc chắn muốn xóa bài học: "${lesson}"?`;
-    
+
     if (cardsInLesson > 0) {
         message += `\n\nCảnh báo: Sẽ có ${cardsInLesson} flashcard bị xóa theo!\n\nHành động này không thể hoàn tác!`;
     }
-    
+
     const confirmed = confirm(message);
-    
+
     if (confirmed) {
         // Xóa tất cả flashcard thuộc bài học này (mutate array in-place)
         for (let i = flashcardsData.length - 1; i >= 0; i--) {
@@ -432,6 +515,7 @@ function deleteLesson(lesson) {
         filterCards('all');
 
         alert('Xóa bài học thành công!');
+        saveToStorage();
     }
 }
 
@@ -441,13 +525,13 @@ function addNewCard() {
     const lesson = document.getElementById('lesson-select').value;
     const question = document.getElementById('question-input').value;
     const answer = document.getElementById('answer-input').value;
-    
+
     // Kiểm tra nếu tất cả các trường đều được điền
     if (!subject || !lesson || !question || !answer) {
         alert('Vui lòng điền đủ thông tin cho tất cả các trường!');
         return;
     }
-    
+
     // Thêm thẻ mới vào dữ liệu (với id)
     flashcardsData.push({
         id: generateId(),
@@ -462,23 +546,24 @@ function addNewCard() {
     document.getElementById('lesson-select').value = '';
     document.getElementById('question-input').value = '';
     document.getElementById('answer-input').value = '';
-    
+
     // Hiển thị lại tất cả các thẻ
     filterCards('all');
-    
+
     alert('Thêm flashcard thành công!');
+    saveToStorage();
 }
 
 // Hàm xóa flashcard
 function deleteCard(index) {
     if (index < 0 || index >= flashcardsData.length) return;
-    
+
     const card = flashcardsData[index];
     const confirmed = confirm(`Bạn có chắc chắn muốn xóa thẻ câu hỏi: "${card.question.substring(0, 50)}..."?\n\nHành động này không thể hoàn tác!`);
-    
+
     if (confirmed) {
         flashcardsData.splice(index, 1);
-        // saveToStorage(); // Removed as per user's request
+        saveToStorage();
         alert('Đã xóa thẻ thành công!');
         filterCards('all');
         renderCardsList();
@@ -492,29 +577,29 @@ function deleteCurrentCard() {
         alert('Không có thẻ nào để xóa!');
         return;
     }
-    
+
     const idx = order[currentIndex];
     const card = flashcardsData[idx];
     const confirmed = confirm(`Bạn có chắc chắn muốn xóa thẻ câu hỏi:\n\n"${card.question}"\n\nHành động này không thể hoàn tác!`);
-    
+
     if (confirmed) {
         flashcardsData.splice(idx, 1);
-        // saveToStorage();
-        
+        saveToStorage();
+
         // Reset index if needed
         if (currentIndex >= flashcardsData.length) {
             currentIndex = Math.max(0, flashcardsData.length - 1);
         }
-        
+
         resetOrder();
         updateTotals();
-        
+
         if (flashcardsData.length > 0) {
             showCard(currentIndex);
         } else {
             document.getElementById('flip-card').innerHTML = '<div style="color: #888;">Không còn thẻ nào</div>';
         }
-        
+
         renderCardsList();
         alert('Xóa flashcard thành công!');
     }
@@ -524,7 +609,7 @@ function deleteCurrentCard() {
 function toggleViewMode() {
     const largeCardArea = document.getElementById('large-card-area');
     const listArea = document.getElementById('list-area');
-    
+
     if (listArea.style.display === 'none') {
         largeCardArea.style.display = 'none';
         listArea.style.display = 'block';
@@ -539,16 +624,16 @@ function toggleViewMode() {
 function renderCardsList() {
     const listContainer = document.getElementById('list-container');
     listContainer.innerHTML = '';
-    
+
     if (flashcardsData.length === 0) {
         listContainer.innerHTML = '<div style="text-align: center; color: #7f8c8d; padding: 20px;">Không có flashcard nào</div>';
         return;
     }
-    
+
     flashcardsData.forEach((card, index) => {
         const listItem = document.createElement('div');
         listItem.className = 'list-item';
-        
+
         listItem.innerHTML = `
             <div class="list-item-content">
                 <div class="list-item-question">${card.question}</div>
@@ -559,7 +644,7 @@ function renderCardsList() {
             </div>
             <button class="list-item-delete" onclick="deleteAndRefresh(${index})">Xóa</button>
         `;
-        
+
         listContainer.appendChild(listItem);
     });
 }
@@ -598,27 +683,27 @@ function exportData() {
 function importData(event) {
     const file = event.target.files[0];
     if (!file) return;
-    
+
     const reader = new FileReader();
-    reader.onload = function(e) {
+    reader.onload = function (e) {
         try {
             const data = JSON.parse(e.target.result);
-            
+
             if (data.flashcards && Array.isArray(data.flashcards)) {
                 const confirmed = confirm('Dữ liệu hiện tại sẽ được thay thế bằng dữ liệu từ file. Tiếp tục?');
-                
+
                 if (confirmed) {
                     flashcardsData.length = 0;
                     data.flashcards.forEach(card => flashcardsData.push(card));
-                    
+
                     if (data.lessons) {
                         Object.keys(lessonsBySubject).forEach(key => delete lessonsBySubject[key]);
                         Object.keys(data.lessons).forEach(subject => {
                             lessonsBySubject[subject] = data.lessons[subject];
                         });
                     }
-                    
-                    // saveToStorage(); // Removed as per user's request
+
+                    saveToStorage();
                     filterCards('all');
                     alert('Nhập dữ liệu thành công!');
                 }
@@ -630,7 +715,7 @@ function importData(event) {
         }
     };
     reader.readAsText(file);
-    
+
     // Reset file input
     event.target.value = '';
 }
@@ -679,7 +764,7 @@ function updateTotals() {
     if (currentLesson) {
         dataToUse = flashcardsData.filter(card => card.lesson === currentLesson);
     }
-    
+
     totalCountEl.textContent = dataToUse.length;
     currentIndexEl.textContent = Math.min(currentIndex + 1, dataToUse.length);
     const pct = dataToUse.length ? ((currentIndex + 1) / dataToUse.length) * 100 : 0;
@@ -687,26 +772,26 @@ function updateTotals() {
 }
 
 function showCard(i) {
-    if (!flashcardsData.length) { 
+    if (!flashcardsData.length) {
         const flipCard = document.getElementById('flip-card');
         if (flipCard) flipCard.innerHTML = '<div style="text-align: center; color: #888;">Không có thẻ nào</div>';
         return;
     }
     const idx = order[i];
     const card = flashcardsData[idx];
-    
+
     // Reset flip state
     const flipCard = document.getElementById('flip-card');
     if (flipCard) {
         flipCard.classList.remove('flipped');
-        
+
         const frontSubject = flipCard.querySelector('.flip-card-front .subject-tag');
         const backSubject = flipCard.querySelector('.flip-card-back .subject-tag');
         const frontLesson = flipCard.querySelector('.flip-card-front .lesson-tag');
         const backLesson = flipCard.querySelector('.flip-card-back .lesson-tag');
         const question = flipCard.querySelector('.question');
         const answer = flipCard.querySelector('.answer');
-        
+
         if (frontSubject) frontSubject.textContent = card.subject;
         if (backSubject) backSubject.textContent = card.subject;
         if (frontLesson) frontLesson.textContent = card.lesson;
@@ -714,7 +799,7 @@ function showCard(i) {
         if (question) question.textContent = card.question;
         if (answer) answer.textContent = card.answer;
     }
-    
+
     updateTotals();
 }
 
@@ -850,7 +935,7 @@ function addExamSetFromCurrentCard() {
     const ids = visible.map(c => c.id);
     if (ids.length === 0) { if (!confirm('Đề rỗng — vẫn tạo?')) return; }
     examSets[name] = ids;
-    // saveToStorage(); // Removed as per user's request
+    saveToStorage();
     renderExamSetDropdown();
     input.value = '';
     alert('Đã thêm đề: ' + name + ' (' + ids.length + ' thẻ)');
@@ -872,7 +957,7 @@ function selectExamSet(name) {
     } else {
         currentExamSet = name;
     }
-    
+
     applyFilters();
 }
 
@@ -880,18 +965,18 @@ function selectExamSet(name) {
 updateExamTabs();
 
 // --- DEBUG: Expose helpers for console ---
-window.debugDeleteLesson = function(name) {
+window.debugDeleteLesson = function (name) {
     if (!name) { alert('Nhập tên bài học!'); return; }
     if (typeof deleteLesson === 'function') deleteLesson(name);
     else alert('Không tìm thấy hàm deleteLesson!');
 };
-window.debugDeleteCardByQuestion = function(question) {
+window.debugDeleteCardByQuestion = function (question) {
     if (!question) { alert('Nhập câu hỏi!'); return; }
     const idx = flashcardsData.findIndex(card => card.question === question);
     if (idx > -1) deleteCard(idx);
     else alert('Không tìm thấy flashcard với câu hỏi này!');
 };
-window.debugClearAll = function() {
+window.debugClearAll = function () {
     if (confirm('Xóa toàn bộ dữ liệu?')) {
         localStorage.removeItem('flashcards');
         localStorage.removeItem('lessonsBySubject');
