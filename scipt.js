@@ -5,100 +5,13 @@ const flashcardsData = [
         "subject": "Tin học",
         "lesson": "SQL",
         "exam": "Đề số 1",
-        "question": "SQL là từ viết tắt của:\nA. Strong Question Language\nB. Structured Question Language\nC. Structured Query Language",
-        "answer": "C. Structured Query Language"
-    },
-    {
-        "id": "mlq1cnqj-4ae4w9",
-        "subject": "Tin học",
-        "lesson": "SQL",
-        "question": "Câu lệnh SQL nào được dùng để trích xuất dữ liệu từ database\nA. Get\nB. Open\nC. Extract\nD. Select",
-        "answer": "D. Select"
-    },
-    {
-        "id": "mlq1dpoo-jruek5",
-        "subject": "Tin học",
-        "lesson": "SQL",
-        "exam": "Đề số 1",
-        "question": "Câu lệnh SQL nào được dùng để cập nhật dữ liệu từ database\nA. Update\nB. Save as\nC. Modify\nD. Save",
-        "answer": "A. Update"
-    },
-    {
-        "id": "mlq1g52s-7uwjz2",
-        "subject": "Tin học",
-        "lesson": "SQL",
-        "exam": "Đề số 1",
-        "question": "Câu lệnh SQL nào được dùng để xóa dữ liệu từ database\nA. Truncate\nB. Delete\nC. Remove",
-        "answer": "B. Delete"
-    },
-    {
-        "id": "mlq1i7kk-o5ltq7",
-        "subject": "Tin học",
-        "lesson": "SQL",
-        "exam": "Đề số 1",
-        "question": "Câu lệnh SQL nào được dùng để chèn thêm dữ liệu vào database:\nA. Add recrd\nB. Add into\nC. Insert\nD. Add new",
-        "answer": "C. Insert"
-    },
-    {
-        "id": "mlq1jzww-adef5l",
-        "subject": "Tin học",
-        "lesson": "SQL",
-        "exam": "Đề số 1",
-        "question": "Trong SQL, làm thế nào để chọn cột dữ liệu có tên FirstName từ bảng Persons:\nA. Extract FirstName FROM Persons\nB. Select FirstName FROM Persons\nC. Slect Persons.FirstName",
-        "answer": "B. Select FirstName FROM Persons"
-    },
-    {
-        "id": "mlq1le07-houqj5",
-        "subject": "Tin học",
-        "lesson": "SQL",
-        "exam": "Đề số 1",
-        "question": "Trong SQL, làm thế nào để chọn tất cả các cột dữ liệu trong bảng Persons:\nA. Select [all] FROM Persons\nB. Select All Persons\nC. Select *.Persons\nD. Select * FROM Persons",
-        "answer": "D. Select * FROM Persons"
-    },
-    {
-        "id": "mlq8bn8u-k93vcq",
-        "subject": "Tin học",
-        "lesson": "SQL",
-        "exam": "Đề số 1",
-        "question": "Trong SQL làm thế nào để chọn tất cả các bản ghi từ bảng Persons với giá trị trong cột FirstName là Peter:\nA. Select [all] FROM Persons WHERE FirstName=’Peter’\nB. Select * FROM Persons WHERE FirstName LIKE’Peter’\nC. Select [all] FROM Persons WHERE FirstName LIKE’Peter’\nD. Select * FROM Persons WHERE FirstName=’Peter’",
-        "answer": "D. Select * FROM Persons WHERE FirstName=’Peter’"
-    },
-    {
-        "id": "mlq8d1qy-d9mmx4",
-        "subject": "Tin học",
-        "lesson": "SQL",
-        "exam": "Đề số 1",
-        "question": "Trong SQL, làm thế nào để chọn tất cả các bản ghi từ bảng Persons với giá trị trong cột FirstName bắt đầu bằng giá trị a:\nA. Select * From Persons WHERE FirstName='%a%'\nB. Select * From Persons WHERE FirstNameLIKE %\nC. Select * From Persons WHERE FirstName=’a’\nD. Select * From Persons WHERE FirstName='a%'",
-        "answer": "D. Select * From Persons WHERE FirstName='a%'"
-    },
-    {
-        "id": "mlq8dy96-ldp2o4",
-        "subject": "Tin học",
-        "lesson": "SQL",
-        "exam": "Đề số 1",
-        "question": "Mệnh đề OR sẽ hiển thị bản ghi nếu bất kỳ điều kiện nào dưới đây là đúng. Và mệnh đề AND sẽ hiển thị bản ghi nếu tất cả điều kiện dưới đây là đúng:\nA. Đúng\nB. Sai",
-        "answer": "A. Đúng"
-    },
-    {
-        "id": "mlq8gzm2-ay1fo1",
-        "subject": "Tin học",
-        "lesson": "SQL",
-        "exam": "Đề số 1",
-        "question": "Trong SQL, làm thế nào để chọn tất cả các bản ghi từ bảng Persons với giá trị trong cột FirsName là Perter và LastName là Jackson:\nA. SELEC * FROM Persons WHERE FirstName LIKE ‘Peter” AND LastName LIKE ‘Jackson’\nB. SELEC * FROM Persons WHERE FirstName=’Peter’ AND LastName=’Jackson’\nC. SELECT FirstName=’Peter’, LastName=’Jackson’ FROM Persons",
-        "answer": "B. SELEC * FROM Persons WHERE FirstName=’Peter’ AND LastName=’Jackson’"
+        "question": "Flash card của Trí",
+        "answer": "Đây là câu trả lời"
     }
 ];
 
 // Mapping môn học với các bài học
 const lessonsBySubject = {
-    "Toán": [
-        "Lượng giác",
-        ""
-    ],
-    "Tiếng Anh": [
-        "Artifisial Intelligence",
-        "Urbanization"
-    ],
     "Tin học": [
         "SQL"
     ]
@@ -127,7 +40,7 @@ try {
 }
 
 
-const GOOGLE_SCRIPT_URL = "https://script.google.com/macros/s/AKfycbxB25cNNPEwsEzDVzfPBdVVFJirso3nVuxaDWYEwFRwyvHKxil0SfazqUByJeyemnY/exec";
+const GOOGLE_SCRIPT_URL = "https://script.google.com/macros/s/AKfycbze28V1eQPhEDh2eSDlQC0idvvBRHmIr62oQL4-tXFDwTqEXDrgeoHaG_dCGkw33QF-/exec";
 
 async function loadFromStorage() {
     try {
