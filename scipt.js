@@ -20,9 +20,6 @@ const lessonsBySubject = {
 // Biến theo dõi bài học hiện tại
 let currentLesson = null;
 let currentSubject = 'all';
-let currentExamSet = null; // currently selected exam set name
-let examSets = {}; // { 'Đề 1': [id1, id2, ...] }
-
 // Broadcast channel for syncing across tabs
 let broadcastChannel = null;
 let lastUpdatedLocal = null;
@@ -60,15 +57,13 @@ async function loadFromStorage() {
     // Cập nhật giao diện sau khi tải dữ liệu
     filterCards('all');
     updateLessons();
-    if (typeof updateExamTabs === 'function') updateExamTabs();
 }
 
 async function saveToStorage() {
     try {
         const dataToSave = {
             flashcards: flashcardsData,
-            lessons: lessonsBySubject,
-            examSets: examSets
+            lessons: lessonsBySubject
         };
         await fetch(GOOGLE_SCRIPT_URL, {
             method: 'POST',
@@ -99,20 +94,6 @@ function applyLoadedData(data, source) {
         Object.keys(lessonsBySubject).forEach(key => delete lessonsBySubject[key]);
         Object.keys(data.lessons).forEach(subject => {
             lessonsBySubject[subject] = data.lessons[subject];
-        });
-    }
-
-    // Cập nhật đề thi
-    examSets = {};
-    if (data.examSets) {
-        examSets = data.examSets;
-    } else {
-        // Tự động tạo examSets từ thuộc tính 'exam' trong flashcards (nếu có)
-        flashcardsData.forEach(card => {
-            if (card.exam) {
-                if (!examSets[card.exam]) examSets[card.exam] = [];
-                examSets[card.exam].push(card.id);
-            }
         });
     }
 
@@ -202,9 +183,8 @@ function renderCardsByLesson(cards) {
 // Hàm lọc thẻ theo môn học hoặc bài học
 function filterCards(subject) {
     currentSubject = subject || 'all';
-    // Reset lesson và exam khi đổi môn học
+    // Reset lesson khi đổi môn học
     currentLesson = null;
-    currentExamSet = null;
 
     document.querySelectorAll('.lesson-btn').forEach(btn => {
         btn.classList.remove('active');
@@ -272,9 +252,6 @@ function selectLesson(lesson) {
         currentLesson = lesson;
     }
 
-    // Reset đề thi khi đổi bài học
-    currentExamSet = null;
-
     updateLessonButtonsUI();
     applyFilters();
 }
@@ -297,16 +274,6 @@ function applyFilters() {
     // 2. Lọc theo Bài học
     if (currentLesson) {
         filtered = filtered.filter(card => card.lesson === currentLesson);
-    }
-
-    // Cập nhật danh sách Đề thi dựa trên dữ liệu đã lọc (Môn + Bài)
-    // Điều này giúp chỉ hiện các Đề có trong Bài học này
-    updateExamTabs(filtered);
-
-    // 3. Lọc theo Đề thi (nếu đang chọn đề)
-    if (currentExamSet) {
-        // Lọc các thẻ có thuộc tính exam trùng khớp
-        filtered = filtered.filter(card => card.exam === currentExamSet);
     }
 
     renderCardsByLesson(filtered);
@@ -555,7 +522,10 @@ function renderCardsList() {
                     <span class="list-item-lesson">${card.lesson}</span>
                 </div>
             </div>
-            <button class="list-item-delete" onclick="deleteAndRefresh(${index})">Xóa</button>
+            <div class="list-actions">
+                <button class="list-item-edit" onclick="editCardItem(${index})">Sửa</button>
+                <button class="list-item-delete" onclick="deleteAndRefresh(${index})">Xóa</button>
+            </div>
         `;
 
         listContainer.appendChild(listItem);
@@ -566,6 +536,131 @@ function renderCardsList() {
 function deleteAndRefresh(index) {
     deleteCard(index);
     renderCardsList();
+}
+
+// ---- Chức năng Cập nhật / Chỉnh sửa Flashcard ----
+let editingIndex = -1;
+
+function createEditModal() {
+    if (document.getElementById('edit-modal')) return;
+
+    const modalHTML = `
+        <div id="edit-modal" style="display:none; position:fixed; top:0; left:0; width:100%; height:100%; background:rgba(0,0,0,0.6); z-index:9999; justify-content:center; align-items:center;">
+            <div style="background:white; padding:25px; border-radius:12px; width:90%; max-width:550px; display:flex; flex-direction:column; gap:15px; box-shadow: 0 10px 30px rgba(0,0,0,0.3);">
+                <h3 style="color:#2c3e50; margin:0; border-bottom:2px solid #ecf0f1; padding-bottom:10px;">✏️ Chỉnh Sửa Flashcard</h3>
+
+                <div style="display:flex; flex-direction:column; gap:5px;">
+                    <label style="font-weight:600; color:#34495e;">Môn học:</label>
+                    <select id="edit-subject" class="input-field" onchange="updateEditLessons()"></select>
+                </div>
+
+                <div style="display:flex; flex-direction:column; gap:5px;">
+                    <label style="font-weight:600; color:#34495e;">Bài học:</label>
+                    <select id="edit-lesson" class="input-field"></select>
+                </div>
+
+                <div style="display:flex; flex-direction:column; gap:5px;">
+                    <label style="font-weight:600; color:#34495e;">Câu hỏi:</label>
+                    <textarea id="edit-question" class="input-field" rows="3" placeholder="Nhập câu hỏi..."></textarea>
+                </div>
+
+                <div style="display:flex; flex-direction:column; gap:5px;">
+                    <label style="font-weight:600; color:#34495e;">Câu trả lời:</label>
+                    <textarea id="edit-answer" class="input-field" rows="3" placeholder="Nhập câu trả lời..."></textarea>
+                </div>
+
+                <div style="display:flex; justify-content:flex-end; gap:12px; margin-top:15px;">
+                    <button onclick="closeEditModal()" class="control-btn" style="background:#95a5a6; color:white; padding: 10px 20px;">Hủy</button>
+                    <button onclick="saveEditCard()" class="control-btn" style="background:#f39c12; color:white; padding: 10px 20px;">Lưu Thay Đổi</button>
+                </div>
+            </div>
+        </div>
+        `;
+
+    document.body.insertAdjacentHTML('beforeend', modalHTML);
+}
+
+function updateEditLessons() {
+    const subject = document.getElementById('edit-subject').value;
+    const lessonSelect = document.getElementById('edit-lesson');
+    lessonSelect.innerHTML = '<option value="">-- Chọn bài học --</option>';
+
+    if (subject && lessonsBySubject[subject]) {
+        lessonsBySubject[subject].forEach(lesson => {
+            const option = document.createElement('option');
+            option.value = lesson;
+            option.textContent = lesson;
+            lessonSelect.appendChild(option);
+        });
+    }
+}
+
+function editCardItem(index) {
+    createEditModal();
+    editingIndex = index;
+    const card = flashcardsData[index];
+
+    const subjectSelect = document.getElementById('edit-subject');
+    subjectSelect.innerHTML = '<option value="">-- Chọn môn học --</option>';
+
+    // Đổ danh sách môn học
+    const mainSubjectSelect = document.getElementById('subject-select');
+    Array.from(mainSubjectSelect.options).forEach(opt => {
+        if (opt.value) {
+            const newOpt = document.createElement('option');
+            newOpt.value = opt.value;
+            newOpt.textContent = opt.textContent;
+            subjectSelect.appendChild(newOpt);
+        }
+    });
+
+    subjectSelect.value = card.subject;
+    updateEditLessons();
+
+    // Chọn bài học, dùng setTimeout để dropdown kip render
+    setTimeout(() => {
+        document.getElementById('edit-lesson').value = card.lesson;
+    }, 10);
+
+    document.getElementById('edit-question').value = card.question;
+    document.getElementById('edit-answer').value = card.answer;
+
+    document.getElementById('edit-modal').style.display = 'flex';
+}
+
+function closeEditModal() {
+    const modal = document.getElementById('edit-modal');
+    if (modal) modal.style.display = 'none';
+    editingIndex = -1;
+}
+
+function saveEditCard() {
+    if (editingIndex === -1) return;
+
+    const subject = document.getElementById('edit-subject').value;
+    const lesson = document.getElementById('edit-lesson').value;
+    const question = document.getElementById('edit-question').value;
+    const answer = document.getElementById('edit-answer').value;
+
+    if (!subject || !lesson || !question || !answer) {
+        alert('Vui lòng điền đủ thông tin cho tất cả các trường!');
+        return;
+    }
+
+    // Cập nhật dữ liệu
+    flashcardsData[editingIndex].subject = subject;
+    flashcardsData[editingIndex].lesson = lesson;
+    flashcardsData[editingIndex].question = question;
+    flashcardsData[editingIndex].answer = answer;
+
+    saveToStorage();
+    closeEditModal();
+
+    // Làm mới UI
+    filterCards(currentSubject); // Refresh state
+    renderCardsList(); // Refresh list view
+
+    alert('Cập nhật flashcard thành công!');
 }
 
 
@@ -649,14 +744,24 @@ const progressBarEl = document.getElementById('progress-bar');
 function switchMode(newMode) {
     mode = newMode;
     document.querySelectorAll('.tab-btn').forEach(b => b.classList.toggle('active', b.dataset.mode === newMode));
-    document.getElementById('large-card-area').style.display = (newMode === 'learn' || newMode === 'practice' || newMode === 'exam') ? 'block' : 'none';
-    document.getElementById('grid-area').style.display = (newMode === 'learn') ? 'none' : 'none';
-    // For simplicity, show grid when user picks a separate view later. For now, "learn" uses large card.
-    // Reset index when switching mode
-    currentIndex = 0;
-    resetOrder();
-    updateTotals();
-    showCard(currentIndex);
+
+    // Hide all main areas first
+    document.getElementById('large-card-area').style.display = 'none';
+    document.getElementById('grid-area').style.display = 'none';
+    document.getElementById('exam-config-area').style.display = 'none';
+    document.getElementById('exam-quiz-area').style.display = 'none';
+    document.getElementById('exam-result-area').style.display = 'none';
+    document.getElementById('list-area').style.display = 'none';
+
+    if (newMode === 'learn' || newMode === 'practice') {
+        document.getElementById('large-card-area').style.display = 'block';
+        currentIndex = 0;
+        resetOrder();
+        updateTotals();
+        showCard(currentIndex);
+    } else if (newMode === 'exam') {
+        document.getElementById('exam-config-area').style.display = 'block';
+    }
 }
 
 function resetOrder() {
@@ -789,113 +894,122 @@ filterCards('all');
 // Also render grid area for quick overview
 renderCards(flashcardsData);
 
-// init exam tabs UI
-function updateExamTabs(availableCards) {
-    const container = document.getElementById('exam-tabs-container');
-    if (!container) return;
+// --- CHẾ ĐỘ THI THỬ (MÔ PHỎNG AZOTA) ---
+let examQuestions = [];
+let examAnswers = [];
+
+function startExam(numQuestions) {
+    if (flashcardsData.length < 4) {
+        alert("Bạn cần ít nhất 4 flashcard trong ngân hàng để tạo câu hỏi trắc nghiệm!");
+        return;
+    }
+
+    document.getElementById('exam-config-area').style.display = 'none';
+    document.getElementById('exam-quiz-area').style.display = 'block';
+
+    // Lấy random flashcards
+    let shuffled = [...flashcardsData].sort(() => 0.5 - Math.random());
+    let selectedCards = shuffled.slice(0, Math.min(numQuestions, shuffled.length));
+
+    examQuestions = selectedCards.map(card => {
+        // Tạo 3 câu trả lời sai từ các thẻ khác
+        let otherCards = flashcardsData.filter(c => c.id !== card.id);
+        let wrongCards = otherCards.sort(() => 0.5 - Math.random()).slice(0, 3);
+        let options = [card.answer, ...wrongCards.map(c => c.answer)];
+        // Xáo trộn đáp án
+        options = options.sort(() => 0.5 - Math.random());
+
+        return {
+            question: card.question,
+            correctAnswer: card.answer,
+            options: options,
+            subject: card.subject
+        };
+    });
+
+    examAnswers = new Array(examQuestions.length).fill(null);
+    renderExamQuestions();
+}
+
+function renderExamQuestions() {
+    const container = document.getElementById('exam-questions-container');
     container.innerHTML = '';
 
-    // Nếu không truyền availableCards (lần đầu load), dùng toàn bộ data
-    const sourceData = availableCards || flashcardsData;
+    examQuestions.forEach((q, index) => {
+        const qDiv = document.createElement('div');
+        qDiv.style.background = '#f9f9f9';
+        qDiv.style.padding = '20px';
+        qDiv.style.borderRadius = '8px';
+        qDiv.style.borderLeft = '4px solid #3498db';
 
-    // Tìm tất cả các đề thi có trong dữ liệu hiện tại (Môn/Bài đã chọn)
-    const availableExams = new Set();
-    sourceData.forEach(card => {
-        if (card.exam) availableExams.add(card.exam);
-    });
+        let html = `
+            <div style="font-weight:bold; font-size:1.1em; color:#2c3e50; margin-bottom:15px; white-space:pre-wrap;">
+                Câu ${index + 1}: ${q.question}
+            </div>
+            <div style="display:flex; flex-direction:column; gap:10px;">
+        `;
 
-    // Nếu không có đề nào trong bài học này, ẩn container hoặc hiện thông báo?
-    // Ở đây ta vẫn hiện nút "Tất cả"
+        q.options.forEach((opt, optIndex) => {
+            html += `
+                <label style="display:flex; align-items:flex-start; gap:10px; cursor:pointer; padding:10px; background:white; border:1px solid #ddd; border-radius:6px; transition:all 0.2s;">
+                    <input type="radio" name="exam-q-${index}" value="${optIndex}" onchange="selectExamAnswer(${index}, '${opt.replace(/'/g, "\\'")}')" style="margin-top:4px;">
+                    <span style="white-space:pre-wrap;">${opt}</span>
+                </label>
+            `;
+        });
 
-    // Tất cả
-    const allBtn = document.createElement('button');
-    allBtn.className = 'exam-tab-btn';
-    allBtn.textContent = 'Tất cả đề';
-    allBtn.onclick = () => selectExamSet(null);
-    if (!currentExamSet) allBtn.classList.add('active');
-    container.appendChild(allBtn);
-
-    // Chỉ render các đề có trong context hiện tại
-    Array.from(availableExams).sort().forEach(name => {
-        const btn = document.createElement('button');
-        btn.className = 'exam-tab-btn';
-        btn.textContent = name;
-        btn.onclick = () => selectExamSet(name);
-        if (currentExamSet === name) btn.classList.add('active');
-
-        // Ẩn nút xóa đề trong chế độ xem lọc để giao diện gọn hơn, 
-        // hoặc giữ nguyên tùy bạn. Ở đây tôi giữ nguyên logic hiển thị.
-        container.appendChild(btn);
+        html += '</div>';
+        qDiv.innerHTML = html;
+        container.appendChild(qDiv);
     });
 }
 
-function addExamSetFromCurrentCard() {
-    const input = document.getElementById('new-exam-name');
-    if (!input) return;
-    const name = input.value && input.value.trim();
-    if (!name) { alert('Nhập tên đề!'); return; }
-
-    // collect ids from current view
-    let visible = flashcardsData;
-    if (currentExamSet) {
-        visible = flashcardsData.filter(c => examSets[currentExamSet] && examSets[currentExamSet].includes(c.id));
-    } else if (currentLesson) {
-        visible = flashcardsData.filter(c => c.lesson === currentLesson);
-    } else if (currentSubject && currentSubject !== 'all') {
-        visible = flashcardsData.filter(c => c.subject === currentSubject);
-    }
-
-    const ids = visible.map(c => c.id);
-    if (ids.length === 0) { if (!confirm('Đề rỗng — vẫn tạo?')) return; }
-    examSets[name] = ids;
-    saveToStorage();
-    renderExamSetDropdown();
-    input.value = '';
-    alert('Đã thêm đề: ' + name + ' (' + ids.length + ' thẻ)');
+function selectExamAnswer(questionIndex, answer) {
+    examAnswers[questionIndex] = answer;
 }
 
-function deleteExamSet(name) {
-    if (!examSets[name]) return;
-    delete examSets[name];
-    saveToStorage();
-    if (currentExamSet === name) currentExamSet = null;
-    updateExamTabs();
-    filterCards(currentSubject || 'all');
-}
-
-function selectExamSet(name) {
-    // Nếu click lại đề đang chọn thì bỏ chọn (về tất cả)
-    if (currentExamSet === name) {
-        currentExamSet = null;
-    } else {
-        currentExamSet = name;
+function submitExam() {
+    // Kiểm tra xem đã làm hết chưa
+    let unanswered = examAnswers.filter(a => a === null).length;
+    if (unanswered > 0) {
+        if (!confirm(`Bạn còn ${unanswered} câu chưa trả lời. Bạn có chắc chắn muốn nộp bài?`)) {
+            return;
+        }
     }
 
-    applyFilters();
+    document.getElementById('exam-quiz-area').style.display = 'none';
+    document.getElementById('exam-result-area').style.display = 'block';
+
+    let correctCount = 0;
+    let reviewHTML = '';
+
+    examQuestions.forEach((q, index) => {
+        let userAnswer = examAnswers[index];
+        let isCorrect = userAnswer === q.correctAnswer;
+        if (isCorrect) correctCount++;
+
+        let bgColor = isCorrect ? '#d4edda' : '#f8d7da';
+        let borderColor = isCorrect ? '#28a745' : '#dc3545';
+
+        reviewHTML += `
+            <div style="background:${bgColor}; border-left:4px solid ${borderColor}; padding:15px; margin-bottom:15px; border-radius:6px;">
+                <div style="font-weight:bold; margin-bottom:5px;">Câu ${index + 1}: ${q.question}</div>
+                <div style="margin-bottom:5px;"><strong>Bạn chọn:</strong> ${userAnswer || '(Không trả lời)'} - ${isCorrect ? '✅ Đúng' : '❌ Sai'}</div>
+                ${!isCorrect ? `<div><strong>Đáp án đúng:</strong> ${q.correctAnswer}</div>` : ''}
+            </div>
+        `;
+    });
+
+    let score = (correctCount / examQuestions.length) * 10;
+    document.getElementById('exam-score').innerText = `${score.toFixed(1)} Điểm`;
+    document.getElementById('exam-feedback').innerText = `Đúng ${correctCount} / ${examQuestions.length} câu`;
+    document.getElementById('exam-review-container').innerHTML = reviewHTML;
 }
 
-// render exam tabs after initial load
-updateExamTabs();
-
-// --- DEBUG: Expose helpers for console ---
-window.debugDeleteLesson = function (name) {
-    if (!name) { alert('Nhập tên bài học!'); return; }
-    if (typeof deleteLesson === 'function') deleteLesson(name);
-    else alert('Không tìm thấy hàm deleteLesson!');
-};
-window.debugDeleteCardByQuestion = function (question) {
-    if (!question) { alert('Nhập câu hỏi!'); return; }
-    const idx = flashcardsData.findIndex(card => card.question === question);
-    if (idx > -1) deleteCard(idx);
-    else alert('Không tìm thấy flashcard với câu hỏi này!');
-};
-window.debugClearAll = function () {
-    if (confirm('Xóa toàn bộ dữ liệu?')) {
-        localStorage.removeItem('flashcards');
-        localStorage.removeItem('lessonsBySubject');
-        location.reload();
-    }
-};
-
-// --- EXAM TAB LOGIC (placeholder) ---
-// TODO: Implement exam tab filtering logic here
+function exitExam() {
+    examQuestions = [];
+    examAnswers = [];
+    document.getElementById('exam-quiz-area').style.display = 'none';
+    document.getElementById('exam-result-area').style.display = 'none';
+    switchMode('exam'); // Reset back to config
+}

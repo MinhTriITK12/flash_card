@@ -1,11 +1,14 @@
 <!DOCTYPE html>
 <html lang="vi">
+
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Hệ Thống Flashcard Ôn Tập</title>
+    <link rel="icon" type="image/png" href="flashcard.png">
     <link rel="stylesheet" href="style.css">
 </head>
+
 <body>
     <header>
         <h1>📚 Flashcard Ghi Nhớ Nhanh</h1>
@@ -22,7 +25,8 @@
             <h2>➕ Thêm Flashcard Mới</h2>
             <div class="data-controls">
                 <button class="control-btn export-btn" onclick="exportData()" title="Tải dữ liệu">💾 Xuất</button>
-                <button class="control-btn import-btn" onclick="document.getElementById('import-file').click()" title="Tải dữ liệu từ file">📂 Nhập</button>
+                <button class="control-btn import-btn" onclick="document.getElementById('import-file').click()"
+                    title="Tải dữ liệu từ file">📂 Nhập</button>
                 <input type="file" id="import-file" style="display: none;" accept=".json" onchange="importData(event)">
             </div>
         </div>
@@ -36,19 +40,11 @@
             <select id="lesson-select" class="input-field">
                 <option value="">-- Chọn bài học --</option>
             </select>
-            <textarea id="question-input" class="input-field" rows="4" placeholder="Nhập câu hỏi... (hỗ trợ xuống dòng)"></textarea>
-            <textarea id="answer-input" class="input-field" rows="3" placeholder="Nhập câu trả lời... (hỗ trợ xuống dòng)"></textarea>
+            <textarea id="question-input" class="input-field" rows="4"
+                placeholder="Nhập câu hỏi... (hỗ trợ xuống dòng)"></textarea>
+            <textarea id="answer-input" class="input-field" rows="3"
+                placeholder="Nhập câu trả lời... (hỗ trợ xuống dòng)"></textarea>
             <button class="add-btn" onclick="addNewCard()">Thêm Thẻ</button>
-        </div>
-    </section>
-
-    <!-- Exam sets (Đề) controls -->
-    <section class="exam-set-controls" style="margin: 24px 0 0 0; text-align: center;">
-        <h4 style="color: #2c3e50;">🗂 Quản lý Đề (Exam Sets)</h4>
-        <input id="new-exam-name" placeholder="Tên đề (vd: Đề 1)" style="padding:8px 12px;border-radius:4px;border:1px solid #ccc;margin-right:8px;">
-        <button onclick="addExamSetFromInput()" style="background:#f39c12;color:white;padding:8px 16px;border:none;border-radius:6px;font-weight:bold;cursor:pointer;">Thêm đề từ view hiện tại</button>
-        <div id="exam-tabs-container" style="margin-top:12px; display:flex; gap:8px; flex-wrap:wrap; justify-content:center;">
-            <!-- exam tabs rendered by JS -->
         </div>
     </section>
 
@@ -64,7 +60,7 @@
                 <h3>📖 Chọn Bài Học</h3>
                 <button class="add-lesson-toggle-btn" onclick="toggleAddLessonForm()">➕ Thêm Bài</button>
             </div>
-            
+
             <div id="add-lesson-form" class="add-lesson-form" style="display: none;">
                 <h4>Thêm Bài Học Mới</h4>
                 <div class="lesson-input-container">
@@ -74,7 +70,8 @@
                         <option value="Tiếng Anh">Tiếng Anh</option>
                         <option value="Tin học">Tin học</option>
                     </select>
-                    <input type="text" id="new-lesson-name" class="lesson-input-field" placeholder="Tên bài học (vd: Hình học nâng cao)">
+                    <input type="text" id="new-lesson-name" class="lesson-input-field"
+                        placeholder="Tên bài học (vd: Hình học nâng cao)">
                     <button class="lesson-add-btn" onclick="addNewLesson()">Thêm</button>
                 </div>
             </div>
@@ -83,17 +80,6 @@
                 <!-- Sẽ được populate bởi JS -->
             </div>
 
-            <!-- Tabs đề số -->
-            <div class="exam-tabs">
-                <h4 style="margin-bottom: 12px; color: #2c3e50;">📝 Chọn Đề Số:</h4>
-                <div class="exam-tabs-buttons">
-                    <button class="exam-tab-btn active" onclick="filterByExam('all')">Tất cả</button>
-                    <button class="exam-tab-btn" onclick="filterByExam(1)">Đề số 1</button>
-                    <button class="exam-tab-btn" onclick="filterByExam(2)">Đề số 2</button>
-                    <button class="exam-tab-btn" onclick="filterByExam(3)">Đề số 3</button>
-                    <button class="exam-tab-btn" onclick="filterByExam(4)">Đề số 4</button>
-                </div>
-            </div>
         </section>
 
         <section id="large-card-area" class="large-card-area">
@@ -118,12 +104,14 @@
             <div class="controls">
                 <div class="left-controls">
                     <button class="icon-btn" onclick="prevCard()" title="Thẻ trước">◀</button>
-                    <div class="progress-indicator"><span id="current-index">1</span> / <span id="total-count">0</span></div>
+                    <div class="progress-indicator"><span id="current-index">1</span> / <span id="total-count">0</span>
+                    </div>
                     <button class="icon-btn" onclick="nextCard()" title="Thẻ tiếp">▶</button>
                 </div>
 
                 <div class="right-controls">
-                    <button class="icon-btn delete-card-btn" id="delete-current-btn" onclick="deleteCurrentCard()" title="Xóa thẻ này">🗑️</button>
+                    <button class="icon-btn delete-card-btn" id="delete-current-btn" onclick="deleteCurrentCard()"
+                        title="Xóa thẻ này">🗑️</button>
                     <button class="icon-btn" id="play-btn" onclick="togglePlay()" title="Tự động phát">▶</button>
                     <button class="icon-btn" id="shuffle-btn" onclick="toggleShuffle()" title="Xáo trộn">🔀</button>
                     <button class="icon-btn" onclick="toggleViewMode()" title="Xem danh sách">📋</button>
@@ -140,6 +128,48 @@
             <!-- Grid render -->
         </section>
 
+        <section id="exam-config-area"
+            style="display:none; text-align:center; padding:30px; background:white; border-radius:10px; box-shadow:0 4px 12px rgba(0,0,0,0.1); margin-top:20px;">
+            <h2 style="color:#2c3e50; margin-bottom: 20px;">📚 Chế độ Thi thử (Mô phỏng Azota)</h2>
+            <p>Chọn số lượng câu hỏi ngẫu nhiên để bắt đầu:</p>
+            <div style="margin: 20px 0; display: flex; gap: 15px; justify-content: center;">
+                <button class="control-btn" style="background:#3498db; color:white; padding:10px 25px;"
+                    onclick="startExam(20)">20 Câu</button>
+                <button class="control-btn" style="background:#3498db; color:white; padding:10px 25px;"
+                    onclick="startExam(30)">30 Câu</button>
+                <button class="control-btn" style="background:#3498db; color:white; padding:10px 25px;"
+                    onclick="startExam(40)">40 Câu</button>
+                <button class="control-btn" style="background:#3498db; color:white; padding:10px 25px;"
+                    onclick="startExam(50)">50 Câu</button>
+            </div>
+        </section>
+
+        <section id="exam-quiz-area"
+            style="display:none; width:100%; max-width: 800px; margin: 20px auto; background: white; padding: 30px; border-radius: 10px; box-shadow: 0 4px 12px rgba(0,0,0,0.1);">
+            <div
+                style="display:flex; justify-content:space-between; align-items:center; border-bottom: 2px solid #eee; padding-bottom: 15px; margin-bottom: 20px;">
+                <h3 style="margin:0;">📝 Bài Thi Ngẫu Nhiên</h3>
+                <h3 id="exam-timer" style="margin:0; color:#e74c3c;"></h3>
+                <button class="control-btn" style="background:#95a5a6; color:white;" onclick="exitExam()">Thoát</button>
+            </div>
+            <div id="exam-questions-container" style="display:flex; flex-direction:column; gap:25px;"></div>
+            <div style="text-align:center; margin-top: 30px; border-top: 2px solid #eee; padding-top: 20px;">
+                <button id="submit-exam-btn" class="control-btn"
+                    style="background:#27ae60; color:white; padding:12px 30px; font-size:1.1em;"
+                    onclick="submitExam()">Nộp Bài</button>
+            </div>
+        </section>
+
+        <section id="exam-result-area"
+            style="display:none; text-align:center; padding:30px; background:white; border-radius:10px; box-shadow:0 4px 12px rgba(0,0,0,0.1); margin-top:20px;">
+            <h2>📊 Kết quả bài thi</h2>
+            <h1 id="exam-score" style="color:#e74c3c; font-size: 3em; margin: 20px 0;"></h1>
+            <p id="exam-feedback"></p>
+            <div id="exam-review-container" style="margin-top: 20px; text-align: left;"></div>
+            <button class="control-btn" style="background:#3498db; color:white; padding:10px 25px; margin-top:20px;"
+                onclick="exitExam()">Thoát Thi Thử</button>
+        </section>
+
         <section id="list-area" class="card-list-area" style="display:none;">
             <div class="list-header">
                 <h3>📋 Danh Sách Flashcard</h3>
@@ -153,4 +183,5 @@
 
     <script src="scipt.js"></script>
 </body>
+
 </html>
