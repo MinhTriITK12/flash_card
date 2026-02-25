@@ -283,6 +283,47 @@ header {
     text-align: center;
 }
 
+.card-front h3,
+.card-back p {
+    max-height: 100%;
+    overflow-y: auto;
+    width: 100%;
+    padding: 0 5px;
+    -webkit-overflow-scrolling: touch;
+    touch-action: pan-y;
+}
+
+/* Tùy chỉnh thanh cuộn cho đẹp hơn */
+.card-front h3::-webkit-scrollbar,
+.card-back p::-webkit-scrollbar,
+.flip-card-front .question::-webkit-scrollbar,
+.flip-card-back .answer::-webkit-scrollbar {
+    width: 6px;
+}
+
+.card-front h3::-webkit-scrollbar-track,
+.card-back p::-webkit-scrollbar-track,
+.flip-card-front .question::-webkit-scrollbar-track,
+.flip-card-back .answer::-webkit-scrollbar-track {
+    background: rgba(255, 255, 255, 0.1);
+    border-radius: 10px;
+}
+
+.card-front h3::-webkit-scrollbar-thumb,
+.card-back p::-webkit-scrollbar-thumb,
+.flip-card-front .question::-webkit-scrollbar-thumb,
+.flip-card-back .answer::-webkit-scrollbar-thumb {
+    background: rgba(0, 0, 0, 0.2);
+    border-radius: 10px;
+}
+
+.card-front h3::-webkit-scrollbar-thumb:hover,
+.card-back p::-webkit-scrollbar-thumb:hover,
+.flip-card-front .question::-webkit-scrollbar-thumb:hover,
+.flip-card-back .answer::-webkit-scrollbar-thumb:hover {
+    background: rgba(0, 0, 0, 0.4);
+}
+
 .card-front {
     background: linear-gradient(135deg, #ffffff 0%, #f8f9fa 100%);
     border-top: 5px solid #3498db;
@@ -377,25 +418,37 @@ header {
     font-size: 1.6em;
     font-weight: 600;
     line-height: 1.5;
+    margin-top: 30px;
     margin-bottom: 20px;
     flex: 1;
     display: flex;
     align-items: center;
+    justify-content: center;
     white-space: pre-wrap;
     word-wrap: break-word;
     overflow-wrap: break-word;
+    overflow-y: auto;
+    width: 100%;
+    -webkit-overflow-scrolling: touch;
+    touch-action: pan-y;
 }
 
 .flip-card-back .answer {
     font-size: 1.4em;
     font-weight: 500;
     line-height: 1.6;
+    margin-top: 30px;
     flex: 1;
     display: flex;
     align-items: center;
+    justify-content: center;
     white-space: pre-wrap;
     word-wrap: break-word;
     overflow-wrap: break-word;
+    overflow-y: auto;
+    width: 100%;
+    -webkit-overflow-scrolling: touch;
+    touch-action: pan-y;
 }
 
 .flip-card-front .hint {
