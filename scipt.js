@@ -926,8 +926,46 @@ document.addEventListener("paste", function (e) {
                 var file = items[i].getAsFile();
                 var reader = new FileReader();
                 reader.onload = function (event) {
-                    var imgHTML = '<img src="' + event.target.result + '" style="max-width: 100%; border-radius: 8px;">';
-                    document.execCommand("insertHTML", false, imgHTML);
+                    var img = new Image();
+                    img.onload = function () {
+                        var canvas = document.createElement('canvas');
+                        var ctx = canvas.getContext('2d');
+
+                        // Thu nhỏ ảnh để giảm dung lượng
+                        var MAX_WIDTH = 600;
+                        var width = img.width;
+                        var height = img.height;
+
+                        if (width > MAX_WIDTH) {
+                            height *= MAX_WIDTH / width;
+                            width = MAX_WIDTH;
+                        }
+
+                        canvas.width = width;
+                        canvas.height = height;
+
+                        // Fill nền trắng (nếu ảnh PNG trong suốt) để khi nén JPEG không bị đen
+                        ctx.fillStyle = "white";
+                        ctx.fillRect(0, 0, width, height);
+                        ctx.drawImage(img, 0, 0, width, height);
+
+                        // Nén ảnh sang định dạng JPEG với chất lượng 60%
+                        var dataUrl = canvas.toDataURL('image/jpeg', 0.6);
+
+                        // Kiểm tra giới hạn 50.000 ký tự của một Ô trong Google Sheets
+                        if (dataUrl.length >= 50000) {
+                            // Ép nén mạnh lần cuối nếu ảnh vẫn to
+                            dataUrl = canvas.toDataURL('image/jpeg', 0.3);
+                            if (dataUrl.length >= 50000) {
+                                alert("CẢNH BÁO: Ảnh bạn dán quá lớn (Sinh ra " + dataUrl.length + " bytes). Database Google Sheets chỉ hỗ trợ tối đa 50.000 bytes mỗi ô. Vui lòng cắt nhỏ ảnh lại hoặc chọn ảnh độ phân giải thấp hơn để lưu thành công!");
+                                return;
+                            }
+                        }
+
+                        var imgHTML = '<img src="' + dataUrl + '" style="max-width: 100%; border-radius: 8px;">';
+                        document.execCommand("insertHTML", false, imgHTML);
+                    };
+                    img.src = event.target.result;
                 };
                 reader.readAsDataURL(file);
                 e.preventDefault(); // Ngăn trình duyệt dán file mặc định để custom chèn Base64 HTML!
@@ -954,8 +992,13 @@ let examQuestions = [];
 let examAnswers = [];
 
 function startExam(numQuestions) {
-    if (flashcardsData.length < 4) {
-        alert("Bạn cần ít nhất 4 flashcard trong ngân hàng để tạo câu hỏi trắc nghiệm!");
+    let examSubject = document.getElementById('exam-subject-select') ? document.getElementById('exam-subject-select').value : 'all';
+    let availableCards = examSubject === 'all'
+        ? flashcardsData
+        : flashcardsData.filter(card => card.subject === examSubject);
+
+    if (availableCards.length < 4) {
+        alert("Cần ít nhất 4 flashcard" + (examSubject === 'all' ? "" : ` cho môn ${examSubject}`) + " để tạo bài thi trắc nghiệm!");
         return;
     }
 
@@ -963,7 +1006,7 @@ function startExam(numQuestions) {
     document.getElementById('exam-quiz-area').style.display = 'block';
 
     // Lấy random flashcards
-    let shuffled = [...flashcardsData].sort(() => 0.5 - Math.random());
+    let shuffled = [...availableCards].sort(() => 0.5 - Math.random());
     let selectedCards = shuffled.slice(0, Math.min(numQuestions, shuffled.length));
 
     examQuestions = selectedCards.map(card => {

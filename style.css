@@ -799,8 +799,38 @@ div.editable-div img,
     font-weight: 700;
 }
 
+.app-tabs {
+    display: flex;
+    justify-content: center;
+    gap: 15px;
+    margin: 20px 0;
+}
+
+.tab-btn {
+    padding: 12px 30px;
+    font-size: 1.2em;
+    font-weight: 600;
+    border: 2px solid #ddd;
+    border-radius: 10px;
+    background: white;
+    color: #34495e;
+    cursor: pointer;
+    transition: all 0.3s ease;
+    box-shadow: 0 2px 5px rgba(0, 0, 0, 0.05);
+}
+
+.tab-btn:hover {
+    background: #f8f9fa;
+    border-color: #3498db;
+    transform: translateY(-2px);
+    box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
+}
+
 .tab-btn.active {
-    background: #f6ffb0;
+    background: #3498db;
+    color: white;
+    border-color: #3498db;
+    box-shadow: 0 4px 12px rgba(52, 152, 219, 0.3);
 }
 
 .main-area {
