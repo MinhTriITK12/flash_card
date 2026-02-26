@@ -40,10 +40,10 @@
             <select id="lesson-select" class="input-field">
                 <option value="">-- Chọn bài học --</option>
             </select>
-            <textarea id="question-input" class="input-field" rows="4"
-                placeholder="Nhập câu hỏi... (hỗ trợ xuống dòng)"></textarea>
-            <textarea id="answer-input" class="input-field" rows="3"
-                placeholder="Nhập câu trả lời... (hỗ trợ xuống dòng)"></textarea>
+            <div id="question-input" class="input-field editable-div" contenteditable="true"
+                data-placeholder="Nhập câu hỏi... (hỗ trợ dán ảnh/xuống dòng)"></div>
+            <div id="answer-input" class="input-field editable-div" contenteditable="true"
+                data-placeholder="Nhập câu trả lời... (hỗ trợ dán ảnh/xuống dòng)"></div>
             <button class="add-btn" onclick="addNewCard()">Thêm Thẻ</button>
         </div>
     </section>

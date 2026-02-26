@@ -585,13 +585,34 @@ p {
     border-color: #3498db;
 }
 
-/* Textarea specific tweaks */
-textarea.input-field {
-    min-height: 70px;
+/* Editable Div specific tweaks */
+div.editable-div {
+    min-height: 100px;
     max-height: 300px;
     line-height: 1.4;
-    resize: vertical;
+    overflow-y: auto;
     white-space: pre-wrap;
+    background-color: white;
+    cursor: text;
+}
+
+div.editable-div:empty:before {
+    content: attr(data-placeholder);
+    color: #999;
+    pointer-events: none;
+    display: block;
+}
+
+div.editable-div img,
+.card-front img,
+.card-back img,
+.list-item-question img,
+.flip-card-front .question img,
+.flip-card-back .answer img {
+    max-width: 100%;
+    height: auto;
+    border-radius: 8px;
+    margin: 5px 0;
 }
 
 .add-btn {

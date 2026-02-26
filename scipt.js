@@ -39,6 +39,16 @@ try {
 
 const GOOGLE_SCRIPT_URL = "https://script.google.com/macros/s/AKfycbze28V1eQPhEDh2eSDlQC0idvvBRHmIr62oQL4-tXFDwTqEXDrgeoHaG_dCGkw33QF-/exec";
 
+// Hàm làm sạch dữ liệu cũ và escape html
+// Sẽ tránh việc trình duyệt hiểu các đoạn HTML kiến thức của người dùng (như <h1>, <sub>) thành DOM gây phá vỡ giao diện.
+// Đồng thời: Vẫn nương nhẹ giữ lại hình ảnh và xuống dòng!
+function formatFlashcardText(rawStr) {
+    if (!rawStr) return '';
+    let safeObj = String(rawStr).replace(/<(?!(\/?)(img|br|div|b|i|u|span|font)\b)/gi, '&lt;');
+    safeObj = safeObj.replace(/\n/g, '<br>'); // Hỗ trợ xuống dòng của textarea cũ
+    return safeObj;
+}
+
 async function loadFromStorage() {
     try {
         const res = await fetch(GOOGLE_SCRIPT_URL);
@@ -135,11 +145,11 @@ function renderCards(cards) {
             <div class="card-inner">
                 <div class="card-front">
                     <span class="subject-tag">${card.subject}</span>
-                    <h3>${card.question}</h3>
+                    <h3>${formatFlashcardText(card.question)}</h3>
                 </div>
                 <div class="card-back">
                     <span class="subject-tag">${card.subject}</span>
-                    <p>${card.answer}</p>
+                    <p>${formatFlashcardText(card.answer)}</p>
                 </div>
             </div>
         `;
@@ -407,11 +417,14 @@ function deleteLesson(lesson) {
 function addNewCard() {
     const subject = document.getElementById('subject-select').value;
     const lesson = document.getElementById('lesson-select').value;
-    const question = document.getElementById('question-input').value;
-    const answer = document.getElementById('answer-input').value;
+    let question = document.getElementById('question-input').innerHTML;
+    let answer = document.getElementById('answer-input').innerHTML;
+
+    if (question === '<br>') question = '';
+    if (answer === '<br>') answer = '';
 
     // Kiểm tra nếu tất cả các trường đều được điền
-    if (!subject || !lesson || !question || !answer) {
+    if (!subject || !lesson || !question.trim() || !answer.trim()) {
         alert('Vui lòng điền đủ thông tin cho tất cả các trường!');
         return;
     }
@@ -421,15 +434,15 @@ function addNewCard() {
         id: generateId(),
         subject: subject,
         lesson: lesson,
-        question: question,
-        answer: answer
+        question: question.trim(),
+        answer: answer.trim()
     });
 
     // Xóa trường input
     document.getElementById('subject-select').value = '';
     document.getElementById('lesson-select').value = '';
-    document.getElementById('question-input').value = '';
-    document.getElementById('answer-input').value = '';
+    document.getElementById('question-input').innerHTML = '';
+    document.getElementById('answer-input').innerHTML = '';
 
     // Hiển thị lại tất cả các thẻ
     filterCards('all');
@@ -520,7 +533,7 @@ function renderCardsList() {
 
         listItem.innerHTML = `
             <div class="list-item-content">
-                <div class="list-item-question">${card.question}</div>
+                <div class="list-item-question">${formatFlashcardText(card.question)}</div>
                 <div class="list-item-meta">
                     <span class="list-item-subject">${card.subject}</span>
                     <span class="list-item-lesson">${card.lesson}</span>
@@ -565,12 +578,12 @@ function createEditModal() {
 
                 <div style="display:flex; flex-direction:column; gap:5px;">
                     <label style="font-weight:600; color:#34495e;">Câu hỏi:</label>
-                    <textarea id="edit-question" class="input-field" rows="3" placeholder="Nhập câu hỏi..."></textarea>
+                    <div id="edit-question" class="input-field editable-div" contenteditable="true" data-placeholder="Nhập câu hỏi... (hỗ trợ dán ảnh)"></div>
                 </div>
 
                 <div style="display:flex; flex-direction:column; gap:5px;">
                     <label style="font-weight:600; color:#34495e;">Câu trả lời:</label>
-                    <textarea id="edit-answer" class="input-field" rows="3" placeholder="Nhập câu trả lời..."></textarea>
+                    <div id="edit-answer" class="input-field editable-div" contenteditable="true" data-placeholder="Nhập câu trả lời... (hỗ trợ dán ảnh)"></div>
                 </div>
 
                 <div style="display:flex; justify-content:flex-end; gap:12px; margin-top:15px;">
@@ -626,8 +639,8 @@ function editCardItem(index) {
         document.getElementById('edit-lesson').value = card.lesson;
     }, 10);
 
-    document.getElementById('edit-question').value = card.question;
-    document.getElementById('edit-answer').value = card.answer;
+    document.getElementById('edit-question').innerHTML = formatFlashcardText(card.question);
+    document.getElementById('edit-answer').innerHTML = formatFlashcardText(card.answer);
 
     document.getElementById('edit-modal').style.display = 'flex';
 }
@@ -643,10 +656,13 @@ function saveEditCard() {
 
     const subject = document.getElementById('edit-subject').value;
     const lesson = document.getElementById('edit-lesson').value;
-    const question = document.getElementById('edit-question').value;
-    const answer = document.getElementById('edit-answer').value;
+    let question = document.getElementById('edit-question').innerHTML;
+    let answer = document.getElementById('edit-answer').innerHTML;
 
-    if (!subject || !lesson || !question || !answer) {
+    if (question === '<br>') question = '';
+    if (answer === '<br>') answer = '';
+
+    if (!subject || !lesson || !question.trim() || !answer.trim()) {
         alert('Vui lòng điền đủ thông tin cho tất cả các trường!');
         return;
     }
@@ -654,8 +670,8 @@ function saveEditCard() {
     // Cập nhật dữ liệu
     flashcardsData[editingIndex].subject = subject;
     flashcardsData[editingIndex].lesson = lesson;
-    flashcardsData[editingIndex].question = question;
-    flashcardsData[editingIndex].answer = answer;
+    flashcardsData[editingIndex].question = question.trim();
+    flashcardsData[editingIndex].answer = answer.trim();
 
     saveToStorage();
     closeEditModal();
@@ -818,8 +834,8 @@ function showCard(i) {
         if (backSubject) backSubject.textContent = card.subject;
         if (frontLesson) frontLesson.textContent = card.lesson;
         if (backLesson) backLesson.textContent = card.lesson;
-        if (question) question.textContent = card.question;
-        if (answer) answer.textContent = card.answer;
+        if (question) question.innerHTML = formatFlashcardText(card.question);
+        if (answer) answer.innerHTML = formatFlashcardText(card.answer);
     }
 
     updateTotals();
@@ -874,7 +890,7 @@ function toggleFullscreen() {
 
 // Keyboard shortcuts: left/right arrows, space to flip
 document.addEventListener('keydown', (e) => {
-    if (e.target.tagName === 'INPUT' || e.target.tagName === 'TEXTAREA') return; // skip when typing
+    if (e.target.tagName === 'INPUT' || e.target.tagName === 'TEXTAREA' || e.target.isContentEditable) return; // skip when typing
     if (e.key === 'ArrowRight') { nextCard(); }
     else if (e.key === 'ArrowLeft') { prevCard(); }
     else if (e.code === 'Space') { e.preventDefault(); flipLargeCard(); }
@@ -897,6 +913,41 @@ filterCards('all');
 
 // Also render grid area for quick overview
 renderCards(flashcardsData);
+
+// Xử lý sự kiện dán ảnh và văn bản cho contenteditable globally
+document.addEventListener("paste", function (e) {
+    if (e.target && e.target.isContentEditable) {
+        var items = e.clipboardData.items;
+        var hasImage = false;
+
+        for (var i = 0; i < items.length; i++) {
+            if (items[i].type.indexOf("image") !== -1) {
+                hasImage = true;
+                var file = items[i].getAsFile();
+                var reader = new FileReader();
+                reader.onload = function (event) {
+                    var imgHTML = '<img src="' + event.target.result + '" style="max-width: 100%; border-radius: 8px;">';
+                    document.execCommand("insertHTML", false, imgHTML);
+                };
+                reader.readAsDataURL(file);
+                e.preventDefault(); // Ngăn trình duyệt dán file mặc định để custom chèn Base64 HTML!
+                break;
+            }
+        }
+
+        // Nếu người dùng dán chữ (kể cả copy từ web chứa sẵn code HTML), ép dán dưới dạng plain text
+        // Điều này giúp giữ nguyên bề mặt chữ (vd: <h1>) thay vì bị trình duyệt biến thành thẻ H1 thật
+        if (!hasImage) {
+            e.preventDefault();
+            var text = (e.originalEvent || e).clipboardData.getData('text/plain');
+            var plainHtml = text.replace(/&/g, '&amp;')
+                .replace(/</g, '&lt;')
+                .replace(/>/g, '&gt;')
+                .replace(/\n/g, '<br>');
+            document.execCommand("insertHTML", false, plainHtml);
+        }
+    }
+});
 
 // --- CHẾ ĐỘ THI THỬ (MÔ PHỎNG AZOTA) ---
 let examQuestions = [];
@@ -997,7 +1048,7 @@ function renderExamQuestions() {
 
         let html = `
             <div style="font-weight:bold; font-size:1.1em; color:#2c3e50; margin-bottom:15px; white-space:pre-wrap;">
-                Câu ${index + 1}: ${q.question}
+                Câu ${index + 1}: ${formatFlashcardText(q.question)}
             </div>
             <div style="display:flex; flex-direction:column; gap:10px;">
         `;
@@ -1007,7 +1058,7 @@ function renderExamQuestions() {
             html += `
                 <label style="display:flex; align-items:flex-start; gap:10px; cursor:pointer; padding:10px; background:white; border:1px solid #ddd; border-radius:6px; transition:all 0.2s;">
                     <input type="radio" name="exam-q-${index}" value="${optIndex}" onchange="selectExamAnswer(${index}, ${optIndex})" style="margin-top:4px;">
-                    <span style="white-space:pre-wrap;"><b>${letter}.</b> ${opt}</span>
+                    <span style="white-space:pre-wrap;"><b>${letter}.</b> ${formatFlashcardText(opt)}</span>
                 </label>
             `;
         });
@@ -1047,9 +1098,9 @@ function submitExam() {
 
         reviewHTML += `
             <div style="background:${bgColor}; border-left:4px solid ${borderColor}; padding:15px; margin-bottom:15px; border-radius:6px;">
-                <div style="font-weight:bold; margin-bottom:5px;">Câu ${index + 1}: ${q.question}</div>
-                <div style="margin-bottom:5px;"><strong>Bạn chọn:</strong> ${userAnswer || '(Không trả lời)'} - ${isCorrect ? '✅ Đúng' : '❌ Sai'}</div>
-                ${!isCorrect ? `<div><strong>Đáp án đúng:</strong> ${q.correctAnswer}</div>` : ''}
+                <div style="font-weight:bold; margin-bottom:5px;">Câu ${index + 1}: ${formatFlashcardText(q.question)}</div>
+                <div style="margin-bottom:5px;"><strong>Bạn chọn:</strong> ${userAnswer ? formatFlashcardText(userAnswer) : '(Không trả lời)'} - ${isCorrect ? '✅ Đúng' : '❌ Sai'}</div>
+                ${!isCorrect ? `<div><strong>Đáp án đúng:</strong> ${formatFlashcardText(q.correctAnswer)}</div>` : ''}
             </div>
         `;
     });
