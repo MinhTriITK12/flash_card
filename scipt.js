@@ -353,6 +353,10 @@ function addNewLesson() {
     // Đóng form
     toggleAddLessonForm();
 
+    // Cập nhật giao diện để hiện bài học mới ngay lập tức
+    updateLessonButtons(currentSubject);
+    updateLessons();
+
     alert('Thêm bài học thành công! Bạn có thể thêm câu hỏi cho bài học này.');
     saveToStorage();
 }
@@ -912,16 +916,65 @@ function startExam(numQuestions) {
     let selectedCards = shuffled.slice(0, Math.min(numQuestions, shuffled.length));
 
     examQuestions = selectedCards.map(card => {
-        // Tạo 3 câu trả lời sai từ các thẻ khác
-        let otherCards = flashcardsData.filter(c => c.id !== card.id);
-        let wrongCards = otherCards.sort(() => 0.5 - Math.random()).slice(0, 3);
-        let options = [card.answer, ...wrongCards.map(c => c.answer)];
-        // Xáo trộn đáp án
-        options = options.sort(() => 0.5 - Math.random());
+        let options = [];
+        let cleanQuestion = card.question;
+        let correctAnswer = card.answer.trim();
+
+        // Dọn dẹp tiền tố A. B. C. D. ở câu trả lời
+        let cleanAnswer = correctAnswer.replace(/^[A-F][\.\)]\s*/i, '').trim();
+
+        // Thử trích xuất các đáp án từ nội dung câu hỏi
+        let questionLines = card.question.split('\n');
+        let extractedOptions = [];
+        let remainingQuestionLines = [];
+        const optRegex = /^([A-F])[\.\)]\s*(.*)/i;
+
+        for (let i = 0; i < questionLines.length; i++) {
+            let line = questionLines[i].trim();
+            let match = line.match(optRegex);
+            if (match) {
+                extractedOptions.push(match[2].trim());
+            } else {
+                if (extractedOptions.length === 0) {
+                    remainingQuestionLines.push(questionLines[i]);
+                } else if (line !== '') {
+                    // Dòng tiếp nối đáp án nhiều dòng
+                    extractedOptions[extractedOptions.length - 1] += '\n' + line;
+                }
+            }
+        }
+
+        if (extractedOptions.length >= 2) {
+            // Nếu câu hỏi đã có sẵn các lựa chọn thì dùng luôn, không random nữa
+            cleanQuestion = remainingQuestionLines.join('\n').trim();
+            options = extractedOptions;
+
+            // Tìm correctAnswer chuẩn từ A, B, C, D
+            let exactLetterMatch = correctAnswer.match(/^[A-F](?=[\.\)]|\s*$)/i);
+            if (exactLetterMatch && correctAnswer.length < 5) {
+                let letterIndex = exactLetterMatch[0].toUpperCase().charCodeAt(0) - 65;
+                if (letterIndex >= 0 && letterIndex < options.length) {
+                    cleanAnswer = options[letterIndex];
+                }
+            } else if (!options.includes(cleanAnswer)) {
+                let found = options.find(o => o.toLowerCase() === cleanAnswer.toLowerCase());
+                if (found) cleanAnswer = found;
+            }
+        } else {
+            // Sinh 3 câu trả lời sai ngẫu nhiên từ thẻ khác
+            let otherCards = flashcardsData.filter(c => c.id !== card.id);
+            let wrongCards = otherCards.sort(() => 0.5 - Math.random()).slice(0, 3);
+            let wrongAnswers = wrongCards.map(c => c.answer.replace(/^[A-F][\.\)]\s*/i, '').trim());
+
+            wrongAnswers = [...new Set(wrongAnswers)].filter(wa => wa !== cleanAnswer);
+
+            options = [cleanAnswer, ...wrongAnswers];
+            options = options.sort(() => 0.5 - Math.random());
+        }
 
         return {
-            question: card.question,
-            correctAnswer: card.answer,
+            question: cleanQuestion,
+            correctAnswer: cleanAnswer,
             options: options,
             subject: card.subject
         };
@@ -950,10 +1003,11 @@ function renderExamQuestions() {
         `;
 
         q.options.forEach((opt, optIndex) => {
+            let letter = String.fromCharCode(65 + optIndex); // Tự động gắn nhãn A, B, C, D...
             html += `
                 <label style="display:flex; align-items:flex-start; gap:10px; cursor:pointer; padding:10px; background:white; border:1px solid #ddd; border-radius:6px; transition:all 0.2s;">
-                    <input type="radio" name="exam-q-${index}" value="${optIndex}" onchange="selectExamAnswer(${index}, '${opt.replace(/'/g, "\\'")}')" style="margin-top:4px;">
-                    <span style="white-space:pre-wrap;">${opt}</span>
+                    <input type="radio" name="exam-q-${index}" value="${optIndex}" onchange="selectExamAnswer(${index}, ${optIndex})" style="margin-top:4px;">
+                    <span style="white-space:pre-wrap;"><b>${letter}.</b> ${opt}</span>
                 </label>
             `;
         });
@@ -964,8 +1018,8 @@ function renderExamQuestions() {
     });
 }
 
-function selectExamAnswer(questionIndex, answer) {
-    examAnswers[questionIndex] = answer;
+function selectExamAnswer(questionIndex, optIndex) {
+    examAnswers[questionIndex] = examQuestions[questionIndex].options[optIndex];
 }
 
 function submitExam() {

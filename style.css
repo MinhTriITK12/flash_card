@@ -276,7 +276,7 @@ header {
     backface-visibility: hidden;
     display: flex;
     flex-direction: column;
-    justify-content: center;
+    justify-content: flex-start;
     align-items: center;
     padding: 20px;
     border-radius: 15px;
@@ -291,6 +291,17 @@ header {
     padding: 0 5px;
     -webkit-overflow-scrolling: touch;
     touch-action: pan-y;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+}
+
+.card-front h3::before,
+.card-front h3::after,
+.card-back p::before,
+.card-back p::after {
+    content: '';
+    margin: auto 0;
 }
 
 /* Tùy chỉnh thanh cuộn cho đẹp hơn */
@@ -422,8 +433,9 @@ header {
     margin-bottom: 20px;
     flex: 1;
     display: flex;
+    flex-direction: column;
     align-items: center;
-    justify-content: center;
+    text-align: center;
     white-space: pre-wrap;
     word-wrap: break-word;
     overflow-wrap: break-word;
@@ -433,6 +445,12 @@ header {
     touch-action: pan-y;
 }
 
+.flip-card-front .question::before,
+.flip-card-front .question::after {
+    content: '';
+    margin: auto 0;
+}
+
 .flip-card-back .answer {
     font-size: 1.4em;
     font-weight: 500;
@@ -440,8 +458,9 @@ header {
     margin-top: 30px;
     flex: 1;
     display: flex;
+    flex-direction: column;
     align-items: center;
-    justify-content: center;
+    text-align: center;
     white-space: pre-wrap;
     word-wrap: break-word;
     overflow-wrap: break-word;
@@ -449,6 +468,12 @@ header {
     width: 100%;
     -webkit-overflow-scrolling: touch;
     touch-action: pan-y;
+}
+
+.flip-card-back .answer::before,
+.flip-card-back .answer::after {
+    content: '';
+    margin: auto 0;
 }
 
 .flip-card-front .hint {
@@ -856,15 +881,19 @@ textarea.input-field {
 
     .flip-card-front,
     .flip-card-back {
-        padding: 25px;
+        padding: 20px 15px;
     }
 
     .flip-card-front .question {
-        font-size: 1.2em;
+        font-size: 1.05em;
+        margin-top: 10px;
+        margin-bottom: 10px;
     }
 
     .flip-card-back .answer {
-        font-size: 1.1em;
+        font-size: 1.05em;
+        margin-top: 10px;
+        margin-bottom: 10px;
     }
 
     .controls {
